@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Confession</title>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap');
 
@@ -14,32 +15,72 @@ body{
     overflow-x:hidden;
 }
 
-/* background effects */
-.heart, .star, .cat{
+/* 🎞️ PAPER TEXTURE */
+body::before{
+    content:"";
     position:fixed;
-    animation: float 10s linear infinite;
-    opacity:0.4;
+    width:200%;
+    height:200%;
+    background:url('https://www.transparenttextures.com/patterns/old-mathematics.png');
+    opacity:0.08;
+    animation:grain 8s steps(10) infinite;
+    pointer-events:none;
 }
 
-.heart{color:#ff4d6d;}
-.star{color:#ffd700;}
-.cat{color:#ffb6c1;}
+@keyframes grain{
+    0%{transform:translate(0,0);}
+    50%{transform:translate(-5%,5%);}
+    100%{transform:translate(0,0);}
+}
 
+/* FLOATING ELEMENTS */
+.heart,.star,.cat{
+    position:fixed;
+    animation:float 12s linear infinite;
+    opacity:0.25;
+}
 @keyframes float{
-    0%{transform:translateY(100vh) scale(0.5);}
-    100%{transform:translateY(-10vh) scale(1.2);}
+    0%{transform:translateY(100vh);}
+    100%{transform:translateY(-10vh);}
 }
 
-/* containers */
+/* 🎬 CINEMATIC ZOOM TRANSITION */
 .section{
     display:none;
     padding:40px;
     text-align:center;
+
+    transform:scale(1.15);
+    opacity:0;
+    filter:blur(10px);
+    transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.active{display:block;}
+.section.active{
+    display:block;
+    transform:scale(1);
+    opacity:1;
+    filter:blur(0px);
+}
 
-/* buttons */
+.section.exit{
+    transform:scale(0.9);
+    opacity:0;
+    filter:blur(12px);
+}
+
+/* BOX STYLE */
+.box{
+    border:2px solid #b85c5c;
+    border-radius:15px;
+    padding:25px;
+    background:rgba(60,10,10,0.55);
+    box-shadow:0 0 25px rgba(255,100,100,0.15);
+    max-width:800px;
+    margin:auto;
+}
+
+/* BUTTONS */
 button{
     padding:10px 20px;
     margin:10px;
@@ -52,219 +93,193 @@ button{
     color:white;
     transition:0.3s;
 }
+button:hover{background:#a83232;}
 
-button:hover{
-    background:#a83232;
-}
-
-/* song cards */
-.song-container{
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    flex-wrap:wrap;
-}
-
+/* SONG */
 .song{
-    background:#3a0f0f;
+    border:2px solid #b85c5c;
+    border-radius:12px;
     padding:20px;
-    border-radius:15px;
-    width:180px;
-    box-shadow:0 0 10px rgba(255,255,255,0.1);
+    margin:20px auto;
+    width:260px;
+    background:rgba(40,10,10,0.6);
+    animation:fadeIn 1s ease;
 }
-
-/* animation text */
-.fade-in{
-    animation:fadeIn 2s ease-in;
-}
-
 @keyframes fadeIn{
-    from{opacity:0;}
-    to{opacity:1;}
-}
-
-/* poem styling */
-.poem{
-    white-space:pre-line;
-    font-size:22px;
-    line-height:1.6;
+    from{opacity:0; transform:translateY(15px);}
+    to{opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
 
 <body>
 
-<!-- floating decorations -->
+<!-- FLOATING -->
 <div class="heart">♥</div>
 <div class="star">★</div>
 <div class="cat">🐱</div>
 
-<!-- INTRO QUESTIONS -->
+<!-- QUESTIONS -->
 <div class="section active" id="q1">
-    <h1>are you sure you want to continue?</h1>
-    <button onclick="nextQ('q2')">yes</button>
-    <button onclick="closeSite()">no</button>
+    <div class="box">
+        <h1>are you sure you want to continue?</h1>
+        <button onclick="go('q2')">yes</button>
+        <button onclick="closeSite()">no</button>
+    </div>
 </div>
 
 <div class="section" id="q2">
-    <h1>sure na dyan? mahaba to</h1>
-    <button onclick="nextQ('q3')">yes</button>
-    <button onclick="closeSite()">no</button>
+    <div class="box">
+        <h1>sure na dyan? mahaba to</h1>
+        <button onclick="go('q3')">yes</button>
+        <button onclick="closeSite()">no</button>
+    </div>
 </div>
 
 <div class="section" id="q3">
-    <h1>last na, are. you. sure?</h1>
-    <button onclick="goToAnimation()">yes</button>
-    <button onclick="closeSite()">no</button>
+    <div class="box">
+        <h1>last na, are. you. sure?</h1>
+        <button onclick="start()">yes</button>
+        <button onclick="closeSite()">no</button>
+    </div>
 </div>
 
 <!-- ANIMATION -->
 <div class="section" id="anim">
-    <h1 class="fade-in">okay here goes....</h1>
+    <h1 class="box">okay here goes....</h1>
 </div>
 
-<!-- SONG SECTION -->
+<!-- SONGS -->
 <div class="section" id="songs">
-    <h2>but before that</h2>
-    <h3>songs that remind me of you</h3>
+    <div class="box">
+        <h2>but before that</h2>
+        <h3>songs that remind me of you</h3>
 
-    <div class="song-container">
-        <div class="song">ALEXANDRA<br>Reality Club</div>
-        <div class="song">SECRET DOOR<br>Arctic Monkeys</div>
-        <div class="song">1&ONLY<br>XLOV</div>
+        <div id="songBox"></div>
+        <button onclick="nextSong()">next</button>
     </div>
-
-    <br>
-    <button onclick="startPoem()">continue</button>
 </div>
 
-<!-- POEM PART 1 -->
-<div class="section" id="p1">
-    <div class="poem">
-Hii Nyela,
+<!-- POEM -->
+<div class="section" id="p1"><div class="box"><div id="t1"></div><button onclick="goP2()">continue</button></div></div>
+<div class="section" id="p2"><div class="box"><div id="t2"></div><button onclick="goP3()">continue</button></div></div>
+<div class="section" id="p3"><div class="box"><div id="t3"></div><button onclick="final()">continue</button></div></div>
+
+<!-- FINAL -->
+<div class="section" id="final">
+<div class="box">
+<h2 id="finalText"></h2>
+</div>
+</div>
+
+<script>
+
+let current = "q1";
+
+/* CINEMATIC SWITCH */
+function go(id){
+    let prev = document.getElementById(current);
+    prev.classList.add("exit");
+
+    setTimeout(()=>{
+        prev.classList.remove("active","exit");
+        document.getElementById(id).classList.add("active");
+        current = id;
+    },600);
+}
+
+/* START FLOW */
+function start(){
+    go("anim");
+    setTimeout(()=>go("songs"),2000);
+}
+
+/* SONGS */
+const songs = [
+"ALEXANDRA — Reality Club",
+"SECRET DOOR — Arctic Monkeys",
+"1&ONLY — XLOV"
+];
+
+let i = 0;
+function nextSong(){
+    if(i < songs.length){
+        let d=document.createElement("div");
+        d.className="song";
+        d.innerText=songs[i];
+        document.getElementById("songBox").appendChild(d);
+        i++;
+    } else {
+        document.querySelector("#songs button").onclick = type1;
+    }
+}
+
+/* TYPEWRITER */
+function type(el,text,speed=18,cb){
+    let i=0;
+    el.innerHTML="";
+    function t(){
+        if(i<text.length){
+            el.innerHTML += text[i];
+            i++;
+            setTimeout(t,speed);
+        } else cb && cb();
+    }
+    t();
+}
+
+/* POEM */
+const p1=`Hii Nyela,
 I need to tell you something
 not to change anything
 just because I’m tired of pretending
 I told you I moved on
 I didn’t
-it’s been eleven months( or more because I wrote this at Apr 28 2026 )
+it’s been eleven months
 of carrying this quietly
 of smiling like it faded
 when it never did
-I remember when I told you before
-and you said you couldn’t
-not because there was nothing
-but because you were closed
-because you thought it wouldn’t end well
-and I understood that
-I still do
-but understanding it
-didn’t make my feelings disappear
-so I stayed
+I stayed
 as your friend
-your best friend( I hope 🫣)
-    </div>
+your best friend (I hope 🫣)`;
 
-    <br>
-    <h3>are you still with me?</h3>
-    <button onclick="nextPoem('p2')">yes</button>
-    <button onclick="closeSite()">no</button>
-</div>
-
-<!-- POEM PART 2 -->
-<div class="section" id="p2">
-    <div class="poem">
-and somewhere along the way
-I learned how to hide it
-how to make it look like I was okay
+const p2=`and I learned how to hide it
+how to act okay
 but I wasn’t
 I’m still here
 still feeling it
-still hoping in ways I don’t say out loud
-and I hate that I lied to you about that
-because everything I do for you
-every little thing
-it all comes from something
-I never really let go of
-    </div>
+still hoping quietly`;
 
-    <h3>do you still wanna read? its so long😭</h3>
-    <button onclick="nextPoem('p3')">yes</button>
-    <button onclick="closeSite()">no</button>
-</div>
+const p3=`how I still get excited
+how I still look for you
+how everything reminds me of you
+how I never really stopped`;
 
-<!-- POEM PART 3 -->
-<div class="section" id="p3">
-    <div class="poem">
-how I still get excited over your messages
-how I look for you in every crowded place
-how every love song sounds like it’s about you
-how I never really stopped hoping
-
-how I feel too much
-and hide it too well
-
-how I just wish
-you knew
-    </div>
-
-    <h3>how are you feeling as of now?</h3>
-    <button onclick="finish()">confused</button>
-    <button onclick="finish()">angry</button>
-    <button onclick="finish()">happy</button>
-    <button onclick="finish()">disgusted</button>
-</div>
-
-<!-- FINAL -->
-<div class="section" id="final">
-    <h2>I value our friendship, though i want you to think about it for a second time</h2>
-</div>
-
-<script>
-function show(id){
-    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+function type1(){
+    go("p1");
+    type(document.getElementById("t1"),p1);
+}
+function goP2(){
+    go("p2");
+    type(document.getElementById("t2"),p2);
+}
+function goP3(){
+    go("p3");
+    type(document.getElementById("t3"),p3);
 }
 
-function nextQ(id){
-    show(id);
+/* FINAL */
+function final(){
+    go("final");
+    type(document.getElementById("finalText"),
+    "I value our friendship.... though i want you to think about it for a second time");
 }
 
+/* CLOSE */
 function closeSite(){
-    document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%'>closed.</h1>";
+    document.body.innerHTML="<h1 style='color:white;text-align:center;margin-top:20%'>closed.</h1>";
 }
 
-function goToAnimation(){
-    show('anim');
-    setTimeout(()=>show('songs'), 2000);
-}
-
-function startPoem(){
-    show('p1');
-}
-
-function nextPoem(id){
-    show(id);
-}
-
-function finish(){
-    show('final');
-}
-
-/* floating effects generator */
-function spawn(type, symbol){
-    for(let i=0;i<10;i++){
-        let el = document.createElement('div');
-        el.className = type;
-        el.innerHTML = symbol;
-        el.style.left = Math.random()*100 + "vw";
-        el.style.animationDuration = (5+Math.random()*5)+"s";
-        document.body.appendChild(el);
-    }
-}
-spawn('heart','♥');
-spawn('star','★');
-spawn('cat','🐱');
 </script>
 
 </body>
