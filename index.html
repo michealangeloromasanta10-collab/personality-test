@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Confession</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap');
+
+body{
+    margin:0;
+    font-family:'Caveat', cursive;
+    background:#2b0a0a;
+    color:#f5d6d6;
+    overflow-x:hidden;
+}
+
+/* background effects */
+.heart, .star, .cat{
+    position:fixed;
+    animation: float 10s linear infinite;
+    opacity:0.4;
+}
+
+.heart{color:#ff4d6d;}
+.star{color:#ffd700;}
+.cat{color:#ffb6c1;}
+
+@keyframes float{
+    0%{transform:translateY(100vh) scale(0.5);}
+    100%{transform:translateY(-10vh) scale(1.2);}
+}
+
+/* containers */
+.section{
+    display:none;
+    padding:40px;
+    text-align:center;
+}
+
+.active{display:block;}
+
+/* buttons */
+button{
+    padding:10px 20px;
+    margin:10px;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:20px;
+    background:#7a1f1f;
+    color:white;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#a83232;
+}
+
+/* song cards */
+.song-container{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.song{
+    background:#3a0f0f;
+    padding:20px;
+    border-radius:15px;
+    width:180px;
+    box-shadow:0 0 10px rgba(255,255,255,0.1);
+}
+
+/* animation text */
+.fade-in{
+    animation:fadeIn 2s ease-in;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+/* poem styling */
+.poem{
+    white-space:pre-line;
+    font-size:22px;
+    line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<!-- floating decorations -->
+<div class="heart">♥</div>
+<div class="star">★</div>
+<div class="cat">🐱</div>
+
+<!-- INTRO QUESTIONS -->
+<div class="section active" id="q1">
+    <h1>are you sure you want to continue?</h1>
+    <button onclick="nextQ('q2')">yes</button>
+    <button onclick="closeSite()">no</button>
+</div>
+
+<div class="section" id="q2">
+    <h1>sure na dyan? mahaba to</h1>
+    <button onclick="nextQ('q3')">yes</button>
+    <button onclick="closeSite()">no</button>
+</div>
+
+<div class="section" id="q3">
+    <h1>last na, are. you. sure?</h1>
+    <button onclick="goToAnimation()">yes</button>
+    <button onclick="closeSite()">no</button>
+</div>
+
+<!-- ANIMATION -->
+<div class="section" id="anim">
+    <h1 class="fade-in">okay here goes....</h1>
+</div>
+
+<!-- SONG SECTION -->
+<div class="section" id="songs">
+    <h2>but before that</h2>
+    <h3>songs that remind me of you</h3>
+
+    <div class="song-container">
+        <div class="song">ALEXANDRA<br>Reality Club</div>
+        <div class="song">SECRET DOOR<br>Arctic Monkeys</div>
+        <div class="song">1&ONLY<br>XLOV</div>
+    </div>
+
+    <br>
+    <button onclick="startPoem()">continue</button>
+</div>
+
+<!-- POEM PART 1 -->
+<div class="section" id="p1">
+    <div class="poem">
+Hii Nyela,
+I need to tell you something
+not to change anything
+just because I’m tired of pretending
+I told you I moved on
+I didn’t
+it’s been eleven months( or more because I wrote this at Apr 28 2026 )
+of carrying this quietly
+of smiling like it faded
+when it never did
+I remember when I told you before
+and you said you couldn’t
+not because there was nothing
+but because you were closed
+because you thought it wouldn’t end well
+and I understood that
+I still do
+but understanding it
+didn’t make my feelings disappear
+so I stayed
+as your friend
+your best friend( I hope 🫣)
+    </div>
+
+    <br>
+    <h3>are you still with me?</h3>
+    <button onclick="nextPoem('p2')">yes</button>
+    <button onclick="closeSite()">no</button>
+</div>
+
+<!-- POEM PART 2 -->
+<div class="section" id="p2">
+    <div class="poem">
+and somewhere along the way
+I learned how to hide it
+how to make it look like I was okay
+but I wasn’t
+I’m still here
+still feeling it
+still hoping in ways I don’t say out loud
+and I hate that I lied to you about that
+because everything I do for you
+every little thing
+it all comes from something
+I never really let go of
+    </div>
+
+    <h3>do you still wanna read? its so long😭</h3>
+    <button onclick="nextPoem('p3')">yes</button>
+    <button onclick="closeSite()">no</button>
+</div>
+
+<!-- POEM PART 3 -->
+<div class="section" id="p3">
+    <div class="poem">
+how I still get excited over your messages
+how I look for you in every crowded place
+how every love song sounds like it’s about you
+how I never really stopped hoping
+
+how I feel too much
+and hide it too well
+
+how I just wish
+you knew
+    </div>
+
+    <h3>how are you feeling as of now?</h3>
+    <button onclick="finish()">confused</button>
+    <button onclick="finish()">angry</button>
+    <button onclick="finish()">happy</button>
+    <button onclick="finish()">disgusted</button>
+</div>
+
+<!-- FINAL -->
+<div class="section" id="final">
+    <h2>I value our friendship, though i want you to think about it for a second time</h2>
+</div>
+
+<script>
+function show(id){
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function nextQ(id){
+    show(id);
+}
+
+function closeSite(){
+    document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%'>closed.</h1>";
+}
+
+function goToAnimation(){
+    show('anim');
+    setTimeout(()=>show('songs'), 2000);
+}
+
+function startPoem(){
+    show('p1');
+}
+
+function nextPoem(id){
+    show(id);
+}
+
+function finish(){
+    show('final');
+}
+
+/* floating effects generator */
+function spawn(type, symbol){
+    for(let i=0;i<10;i++){
+        let el = document.createElement('div');
+        el.className = type;
+        el.innerHTML = symbol;
+        el.style.left = Math.random()*100 + "vw";
+        el.style.animationDuration = (5+Math.random()*5)+"s";
+        document.body.appendChild(el);
+    }
+}
+spawn('heart','♥');
+spawn('star','★');
+spawn('cat','🐱');
+</script>
+
+</body>
+</html>
