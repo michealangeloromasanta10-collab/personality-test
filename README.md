@@ -1,2 +1,0 @@
-# personality-test
-fun quiz
