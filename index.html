@@ -43,7 +43,7 @@ body::before{
     100%{transform:translateY(-10vh);}
 }
 
-/* CINEMATIC TRANSITION */
+/* SECTIONS */
 .section{
     display:none;
     padding:40px;
@@ -53,18 +53,11 @@ body::before{
     filter:blur(10px);
     transition:1s cubic-bezier(0.22,1,0.36,1);
 }
-
 .section.active{
     display:block;
     transform:scale(1);
     opacity:1;
     filter:blur(0);
-}
-
-.section.exit{
-    transform:scale(0.92);
-    opacity:0;
-    filter:blur(12px);
 }
 
 /* BOX */
@@ -75,9 +68,19 @@ body::before{
     background:rgba(60,10,10,0.55);
     max-width:800px;
     margin:auto;
+    transition:0.4s;
 }
 
-/* SONG BORDER FIX (RESTORED) */
+/* ✨ POEM BORDER GLOW */
+.glow{
+    animation:poemGlow 2s infinite alternate;
+}
+@keyframes poemGlow{
+    from{box-shadow:0 0 10px rgba(255,120,120,0.2);}
+    to{box-shadow:0 0 25px rgba(255,120,120,0.6);}
+}
+
+/* SONG GLOW */
 .song{
     border:2px solid #b85c5c;
     border-radius:12px;
@@ -85,6 +88,11 @@ body::before{
     margin:15px auto;
     width:260px;
     background:rgba(40,10,10,0.6);
+    animation:songGlow 1.5s ease;
+}
+@keyframes songGlow{
+    from{box-shadow:0 0 0 rgba(255,100,100,0);}
+    to{box-shadow:0 0 20px rgba(255,100,100,0.4);}
 }
 
 /* BUTTONS */
@@ -98,15 +106,34 @@ button{
     font-size:20px;
     background:#7a1f1f;
     color:white;
+    position:relative;
+    overflow:hidden;
 }
-button:hover{background:#a83232;}
 
-/* POEM */
-#poem{
-    white-space:pre-line;
-    text-align:left;
-    font-size:22px;
-    line-height:1.6;
+/* 💡 CLICK LIGHT EFFECT */
+button:active::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:200%;
+    height:200%;
+    background:radial-gradient(circle,rgba(255,255,255,0.4),transparent);
+    transform:translate(-50%,-50%);
+    animation:flash 0.4s ease;
+}
+@keyframes flash{
+    from{opacity:1;}
+    to{opacity:0;}
+}
+
+/* TEXT ANIMATIONS */
+.fadeText{
+    animation:fadeIn 1.5s ease;
+}
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
 }
 </style>
 </head>
@@ -117,7 +144,7 @@ button:hover{background:#a83232;}
 <div class="star">★</div>
 <div class="cat">🐱</div>
 
-<!-- QUESTIONS 1 -->
+<!-- Q1 -->
 <div class="section active" id="q1">
 <div class="box">
 <h1>are you sure you want to continue?</h1>
@@ -126,6 +153,7 @@ button:hover{background:#a83232;}
 </div>
 </div>
 
+<!-- Q2 -->
 <div class="section" id="q2">
 <div class="box">
 <h1>sure na dyan? mahaba to</h1>
@@ -134,10 +162,14 @@ button:hover{background:#a83232;}
 </div>
 </div>
 
+<!-- Q3 -->
 <div class="section" id="q3">
 <div class="box">
 <h1>last na, are. you. sure?</h1>
-<button onclick="start()">yes</button>
+
+<h2 id="beforeText" class="fadeText"></h2>
+
+<button onclick="startCinematic()">yes</button>
 <button onclick="closeSite()">no</button>
 </div>
 </div>
@@ -145,46 +177,24 @@ button:hover{background:#a83232;}
 <!-- SONGS -->
 <div class="section" id="songs">
 <div class="box">
-<h2>songs that remind me of you</h2>
+<h2 id="btwText" class="fadeText"></h2>
+<h3>songs that remind me of you</h3>
 <div id="songBox"></div>
 <button onclick="nextSong()">next</button>
 </div>
 </div>
 
-<!-- POEM PARTS -->
-<div class="section" id="p1">
+<!-- POEM INTRO -->
+<div class="section" id="intro">
 <div class="box">
-<div id="t1"></div>
-<h3>are you still with me?</h3>
-<button onclick="goP2()">yes</button>
-<button onclick="closeSite()">no</button>
+<h2 id="okayText"></h2>
 </div>
 </div>
 
-<div class="section" id="p2">
-<div class="box">
-<div id="t2"></div>
-<h3>do you still wanna read? its so long😭</h3>
-<button onclick="goP3()">yes</button>
-<button onclick="closeSite()">no</button>
-</div>
-</div>
-
-<div class="section" id="p3">
-<div class="box">
-<div id="t3"></div>
-<h3>last question... how are you feeling?</h3>
-<button onclick="final()">confused</button>
-<button onclick="final()">happy</button>
-<button onclick="final()">angry</button>
-<button onclick="final()">disgusted</button>
-</div>
-</div>
-
-<!-- FINAL -->
-<div class="section" id="final">
-<div class="box">
-<h2 id="finalText"></h2>
+<!-- POEM -->
+<div class="section" id="poemSec">
+<div class="box glow">
+<div id="poem"></div>
 </div>
 </div>
 
@@ -194,25 +204,41 @@ let current="q1";
 
 function go(id){
 let prev=document.getElementById(current);
-prev.classList.add("exit");
-
+prev.classList.remove("active");
 setTimeout(()=>{
-prev.classList.remove("active","exit");
 document.getElementById(id).classList.add("active");
 current=id;
-},700);
+},400);
 }
 
-function start(){
+/* Q3 "BUT BEFORE THAT" */
+document.getElementById("beforeText").innerText="but before that";
+
+/* animate it */
+setInterval(()=>{
+document.getElementById("beforeText").style.opacity=
+Math.random()>0.5?"1":"0.5";
+},600);
+
+/* START */
+function startCinematic(){
 go("songs");
+
+/* animate before text */
+let t=document.getElementById("btwText");
+t.innerText="but before that";
+setInterval(()=>{
+t.style.transform="scale("+(1+Math.random()*0.05)+")";
+},500);
 }
 
-/* SONGS (BORDER FIXED) */
+/* SONGS */
 const songs=[
 "ALEXANDRA — Reality Club",
 "SECRET DOOR — Arctic Monkeys",
 "1&ONLY — XLOV"
 ];
+
 let i=0;
 
 function nextSong(){
@@ -223,12 +249,33 @@ d.innerText=songs[i];
 document.getElementById("songBox").appendChild(d);
 i++;
 } else {
-document.querySelector("#songs button").onclick=type1;
+go("intro");
+typeIntro();
 }
 }
 
-/* FULL POEM (UNCHANGED BUT CORRECT FORMAT) */
-const p1=`I need to tell you something
+/* "okay here goes" */
+function typeIntro(){
+let el=document.getElementById("okayText");
+let text="okay here goes...";
+let i=0;
+el.innerHTML="";
+
+function t(){
+if(i<text.length){
+el.innerHTML+=text[i];
+i++;
+setTimeout(t,80);
+} else {
+setTimeout(()=>go("poemSec"),1200);
+setTimeout(typePoem,1600);
+}
+}
+t();
+}
+
+/* FULL POEM */
+const poem=`I need to tell you something
 not to change anything
 just because I’m tired of pretending
 I told you I moved on
@@ -248,9 +295,9 @@ but understanding it
 didn’t make my feelings disappear
 so I stayed
 as your friend
-your best friend (I hope 🫣)`;
+your best friend (I hope 🫣)
 
-const p2=`and somewhere along the way
+and somewhere along the way
 I learned how to hide it
 how to make it look like I was okay
 but I wasn’t
@@ -258,44 +305,23 @@ I’m still here
 still feeling it
 still hoping in ways I don’t say out loud
 and I hate that I lied to you about that
-because everything I do for you
-every little thing
-it all comes from something
-I never really let go of`;
 
-const p3=`and I don’t think you realize
+and I don’t think you realize
 what you do to me
-how something as simple as your name
-lighting up my phone
-can change my whole mood
+how your name changes my mood
 how I still get excited
-over the smallest message from you
-how I hear your voice in class
-and everything else fades
-just for a second
-how I look for you
-in every crowded place
-and somehow
-you’re always the one I find first
+over your messages
+how I look for you everywhere
+and always find you first
 
-how I make up little scenarios
-of us in my head
-like holding your hand
-like being something more
-how every calm moment
-every beautiful place
-makes me wish
-you were there with me
+how I make scenarios of us
+how I wish you were there in every moment
 how every love song
-sounds like it was written
-with you in mind
+feels like it belongs to you
 
 and it’s exhausting
 to feel this much
 and act like it’s nothing
-to hope
-even when I tell myself
-I shouldn’t
 
 so if nothing ever changes
 I’ll stay
@@ -303,46 +329,33 @@ I’ll still be here
 as your friend....
 though i want you to think about it for a second time`;
 
-/* TYPEWRITER (SLOW + PAUSE FRIENDSHIP....) */
-function type(el,text,speed=30,cb){
+/* TYPEWRITER */
+function typePoem(){
+let el=document.getElementById("poem");
 let i=0;
 el.innerHTML="";
+document.querySelector(".box").classList.add("glow");
 
 function t(){
-if(i<text.length){
-
-el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
-
-/* 2 second pause */
-if(text.substring(i-11,i)==="friendship"){
-setTimeout(t,2000);
-return;
-}
-
+if(i<poem.length){
+el.innerHTML+=poem[i]==="\n"?"<br>":poem[i];
 i++;
-setTimeout(t,speed);
-} else cb && cb();
+setTimeout(t,35);
+} else {
+setTimeout(typeFinal,1000);
+}
 }
 t();
 }
 
-/* FLOW */
-function type1(){
-go("p1");
-type(document.getElementById("t1"),p1);
-}
-function goP2(){
-go("p2");
-type(document.getElementById("t2"),p2);
-}
-function goP3(){
-go("p3");
-type(document.getElementById("t3"),p3);
-}
-function final(){
-go("final");
-type(document.getElementById("finalText"),
-"thank you...");
+/* FINAL SLOW */
+function typeFinal(){
+go("poemSec");
+
+setTimeout(()=>{
+document.getElementById("poem").innerHTML+=
+"<br><br><span style='font-size:28px'>thank you...</span>";
+},2000);
 }
 
 function closeSite(){
