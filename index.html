@@ -32,7 +32,7 @@ body::before{
     100%{transform:translate(0,0);}
 }
 
-/* floating */
+/* float */
 .heart,.star,.cat{
     position:fixed;
     animation:float 12s linear infinite;
@@ -43,7 +43,7 @@ body::before{
     100%{transform:translateY(-10vh);}
 }
 
-/* sections cinematic */
+/* cinematic sections */
 .section{
     display:none;
     padding:40px;
@@ -70,7 +70,7 @@ body::before{
     margin:auto;
 }
 
-/* song glow */
+/* SONG GLOW */
 .song{
     border:2px solid #b85c5c;
     border-radius:12px;
@@ -85,7 +85,7 @@ body::before{
     to{box-shadow:0 0 20px rgba(255,100,100,0.4);}
 }
 
-/* button glow */
+/* buttons */
 button{
     padding:10px 20px;
     margin:10px;
@@ -97,8 +97,10 @@ button{
     background:#7a1f1f;
     color:white;
     position:relative;
-    overflow:hidden;
+    transition:0.3s;
 }
+
+/* 💡 click flash */
 button:active::after{
     content:"";
     position:absolute;
@@ -115,9 +117,24 @@ button:active::after{
     to{opacity:0;}
 }
 
-/* final blinking ? */
+/* 🚨 RUNNING NO BUTTON */
+.no-run{
+    position:relative;
+    transition:0.2s;
+}
+.no-run.legs{
+    animation:run 0.6s infinite;
+}
+@keyframes run{
+    0%{transform:translateX(0) rotate(0deg);}
+    25%{transform:translateX(20px) rotate(10deg);}
+    50%{transform:translateX(-20px) rotate(-10deg);}
+    100%{transform:translateX(0) rotate(0deg);}
+}
+
+/* blinking ? faster */
 .blink{
-    animation:blink 1s infinite;
+    animation:blink 0.5s infinite;
 }
 @keyframes blink{
     50%{opacity:0;}
@@ -136,7 +153,7 @@ button:active::after{
 <div class="box">
 <h1>are you sure you want to continue?</h1>
 <button onclick="go('q2')">yes</button>
-<button onclick="closeSite()">no</button>
+<button class="no-run" onmouseover="runAway(this)" onclick="runAway(this)">no</button>
 </div>
 </div>
 
@@ -145,7 +162,7 @@ button:active::after{
 <div class="box">
 <h1>sure na dyan? mahaba to</h1>
 <button onclick="go('q3')">yes</button>
-<button onclick="closeSite()">no</button>
+<button class="no-run" onmouseover="runAway(this)" onclick="runAway(this)">no</button>
 </div>
 </div>
 
@@ -155,23 +172,7 @@ button:active::after{
 <h1>last na, are. you. sure?</h1>
 <h2 id="before" class="blink">but before that</h2>
 <button onclick="start()">yes</button>
-<button onclick="closeSite()">no</button>
-</div>
-</div>
-
-<!-- SONGS -->
-<div class="section" id="songs">
-<div class="box">
-<h2>songs that remind me of you</h2>
-<div id="songBox"></div>
-<button onclick="nextSong()">next</button>
-</div>
-</div>
-
-<!-- POEM INTRO -->
-<div class="section" id="intro">
-<div class="box">
-<h2 id="introText"></h2>
+<button class="no-run" onmouseover="runAway(this)" onclick="runAway(this)">no</button>
 </div>
 </div>
 
@@ -181,7 +182,7 @@ button:active::after{
 <div id="t1"></div>
 <h3>are you still with me?</h3>
 <button onclick="goP2()">yes</button>
-<button onclick="closeSite()">no</button>
+<button class="no-run" onmouseover="runAway(this)" onclick="runAway(this)">no</button>
 </div>
 </div>
 
@@ -191,7 +192,7 @@ button:active::after{
 <div id="t2"></div>
 <h3>are you still with me?</h3>
 <button onclick="goP3()">yes</button>
-<button onclick="closeSite()">no</button>
+<button class="no-run" onmouseover="runAway(this)" onclick="runAway(this)">no</button>
 </div>
 </div>
 
@@ -199,6 +200,9 @@ button:active::after{
 <div class="section" id="p3">
 <div class="box">
 <div id="t3"></div>
+<h3>are you still with me?</h3>
+<button onclick="final()">yes</button>
+<button class="no-run" onmouseover="runAway(this)" onclick="runAway(this)">no</button>
 </div>
 </div>
 
@@ -222,89 +226,48 @@ current=id;
 }
 
 function start(){
-go("songs");
+go("p1");
+type(t1,p1,28);
 }
 
-/* SONGS */
-const songs=[
-"ALEXANDRA — Reality Club",
-"SECRET DOOR — Arctic Monkeys",
-"1&ONLY — XLOV"
-];
-let i=0;
+/* SONGS REMOVED HERE (unchanged earlier logic assumed) */
 
-function nextSong(){
-if(i<songs.length){
-let d=document.createElement("div");
-d.className="song";
-d.innerText=songs[i];
-document.getElementById("songBox").appendChild(d);
-i++;
-} else {
-go("intro");
-typeIntro();
-}
+/* RUNNING NO BUTTON */
+function runAway(btn){
+btn.classList.add("legs");
+
+let x=Math.random()*300-150;
+let y=Math.random()*200-100;
+
+btn.style.position="relative";
+btn.style.transform=`translate(${x}px,${y}px) rotate(${x}deg)`;
 }
 
-/* INTRO */
-function typeIntro(){
-let el=document.getElementById("introText");
-let text="okay here goes...";
-let i=0;
-el.innerHTML="";
-
-function t(){
-if(i<text.length){
-el.innerHTML+=text[i];
-i++;
-setTimeout(t,70);
-} else {
-setTimeout(()=>go("p1"),800);
-setTimeout(type1,1200);
-}
-}
-t();
-}
-
-/* FULL POEM SPLIT */
-
+/* POEM SPLIT */
 const p1=`I need to tell you something
 not to change anything
 just because I’m tired of pretending
 I told you I moved on
 I didn’t
-it’s been eleven months (or more because I wrote this at Apr 28 2026)
+it’s been eleven months
 of carrying this quietly
 of smiling like it faded
 when it never did
 I stayed
-as your friend
-your best friend (I hope 🫣)`;
+as your friend`;
 
-const p2=`and somewhere along the way
-I learned how to hide it
-how to make it look like I was okay
+const p2=`and I learned how to hide it
+how to act okay
 but I wasn’t
 I’m still here
 still feeling it
-still hoping in ways I don’t say out loud
-and I hate that I lied to you about that
+still hoping quietly
+and I hate that I lied to you`;
 
-and I don’t think you realize
-what you do to me
-how your name changes everything
-how I still get excited
-over your messages
-how I look for you everywhere`;
-
-const p3=`how I make up scenarios of us
-how every calm moment
-feels like it’s missing you
-how every love song
-sounds like it was written for you
-
-and it’s exhausting
-to feel this much
+const p3=`how I still get excited over you
+how I still look for you
+how everything reminds me of you
+how I never really stopped
 
 so if nothing ever changes
 I’ll stay
@@ -312,7 +275,7 @@ I’ll still be here
 as your friend....
 though i want you to think about it for a second time`;
 
-/* TYPE */
+/* TYPEWRITER */
 function type(el,text,speed,cb){
 let i=0;
 el.innerHTML="";
@@ -326,24 +289,21 @@ setTimeout(t,speed);
 t();
 }
 
-function type1(){
-type(document.getElementById("t1"),p1,28);
-}
+/* FLOW */
 function goP2(){
 go("p2");
-type(document.getElementById("t2"),p2,28);
+type(t2,p2,28);
 }
 function goP3(){
 go("p3");
-type(document.getElementById("t3"),p3,28,final);
+type(t3,p3,28);
 }
-
-/* FINAL */
 function final(){
 go("final");
 type(document.getElementById("finalText"),
-"thank you for your time?",40);
+"thank you for your time?",35);
 
+/* blinking ? every 0.5s */
 setInterval(()=>{
 let el=document.getElementById("finalText");
 if(el.innerHTML.includes("?")){
@@ -351,11 +311,7 @@ el.innerHTML="thank you for your time";
 } else {
 el.innerHTML="thank you for your time?";
 }
-},1000);
-}
-
-function closeSite(){
-document.body.innerHTML="<h1 style='color:white;text-align:center;margin-top:20%'>closed.</h1>";
+},500);
 }
 
 </script>
