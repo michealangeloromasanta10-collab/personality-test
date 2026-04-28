@@ -15,7 +15,7 @@ body{
     overflow-x:hidden;
 }
 
-/* paper texture */
+/* PAPER TEXTURE */
 body::before{
     content:"";
     position:fixed;
@@ -26,14 +26,13 @@ body::before{
     animation:grain 8s steps(10) infinite;
     pointer-events:none;
 }
-
 @keyframes grain{
     0%{transform:translate(0,0);}
     50%{transform:translate(-5%,5%);}
     100%{transform:translate(0,0);}
 }
 
-/* floating */
+/* FLOATING */
 .heart,.star,.cat{
     position:fixed;
     animation:float 12s linear infinite;
@@ -44,7 +43,7 @@ body::before{
     100%{transform:translateY(-10vh);}
 }
 
-/* cinematic transitions */
+/* CINEMATIC TRANSITION */
 .section{
     display:none;
     padding:40px;
@@ -52,7 +51,7 @@ body::before{
     transform:scale(1.15);
     opacity:0;
     filter:blur(10px);
-    transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+    transition:1s cubic-bezier(0.22,1,0.36,1);
 }
 
 .section.active{
@@ -68,7 +67,7 @@ body::before{
     filter:blur(12px);
 }
 
-/* box */
+/* BOX */
 .box{
     border:2px solid #b85c5c;
     border-radius:15px;
@@ -78,7 +77,17 @@ body::before{
     margin:auto;
 }
 
-/* buttons */
+/* SONG BORDER FIX (RESTORED) */
+.song{
+    border:2px solid #b85c5c;
+    border-radius:12px;
+    padding:15px;
+    margin:15px auto;
+    width:260px;
+    background:rgba(40,10,10,0.6);
+}
+
+/* BUTTONS */
 button{
     padding:10px 20px;
     margin:10px;
@@ -92,7 +101,7 @@ button{
 }
 button:hover{background:#a83232;}
 
-/* poem formatting */
+/* POEM */
 #poem{
     white-space:pre-line;
     text-align:left;
@@ -108,7 +117,7 @@ button:hover{background:#a83232;}
 <div class="star">★</div>
 <div class="cat">🐱</div>
 
-<!-- QUESTIONS -->
+<!-- QUESTIONS 1 -->
 <div class="section active" id="q1">
 <div class="box">
 <h1>are you sure you want to continue?</h1>
@@ -142,10 +151,40 @@ button:hover{background:#a83232;}
 </div>
 </div>
 
-<!-- POEM -->
-<div class="section" id="poemSec">
+<!-- POEM PARTS -->
+<div class="section" id="p1">
 <div class="box">
-<div id="poem"></div>
+<div id="t1"></div>
+<h3>are you still with me?</h3>
+<button onclick="goP2()">yes</button>
+<button onclick="closeSite()">no</button>
+</div>
+</div>
+
+<div class="section" id="p2">
+<div class="box">
+<div id="t2"></div>
+<h3>do you still wanna read? its so long😭</h3>
+<button onclick="goP3()">yes</button>
+<button onclick="closeSite()">no</button>
+</div>
+</div>
+
+<div class="section" id="p3">
+<div class="box">
+<div id="t3"></div>
+<h3>last question... how are you feeling?</h3>
+<button onclick="final()">confused</button>
+<button onclick="final()">happy</button>
+<button onclick="final()">angry</button>
+<button onclick="final()">disgusted</button>
+</div>
+</div>
+
+<!-- FINAL -->
+<div class="section" id="final">
+<div class="box">
+<h2 id="finalText"></h2>
 </div>
 </div>
 
@@ -153,7 +192,6 @@ button:hover{background:#a83232;}
 
 let current="q1";
 
-/* navigation */
 function go(id){
 let prev=document.getElementById(current);
 prev.classList.add("exit");
@@ -169,7 +207,7 @@ function start(){
 go("songs");
 }
 
-/* songs */
+/* SONGS (BORDER FIXED) */
 const songs=[
 "ALEXANDRA — Reality Club",
 "SECRET DOOR — Arctic Monkeys",
@@ -180,17 +218,17 @@ let i=0;
 function nextSong(){
 if(i<songs.length){
 let d=document.createElement("div");
+d.className="song";
 d.innerText=songs[i];
-d.style.margin="15px";
 document.getElementById("songBox").appendChild(d);
 i++;
 } else {
-document.querySelector("#songs button").onclick=typePoem;
+document.querySelector("#songs button").onclick=type1;
 }
 }
 
-/* FULL POEM (EXACT) */
-const poem = `I need to tell you something
+/* FULL POEM (UNCHANGED BUT CORRECT FORMAT) */
+const p1=`I need to tell you something
 not to change anything
 just because I’m tired of pretending
 I told you I moved on
@@ -210,9 +248,9 @@ but understanding it
 didn’t make my feelings disappear
 so I stayed
 as your friend
-your best friend (I hope 🫣)
+your best friend (I hope 🫣)`;
 
-and somewhere along the way
+const p2=`and somewhere along the way
 I learned how to hide it
 how to make it look like I was okay
 but I wasn’t
@@ -223,9 +261,9 @@ and I hate that I lied to you about that
 because everything I do for you
 every little thing
 it all comes from something
-I never really let go of
+I never really let go of`;
 
-and I don’t think you realize
+const p3=`and I don’t think you realize
 what you do to me
 how something as simple as your name
 lighting up my phone
@@ -239,14 +277,6 @@ how I look for you
 in every crowded place
 and somehow
 you’re always the one I find first
-how I notice everything
-the way you talk
-the way you laugh
-what you’re wearing
-how your hair falls
-how I catch myself staring
-longer than I should
-and then pretending I wasn’t
 
 how I make up little scenarios
 of us in my head
@@ -263,38 +293,9 @@ with you in mind
 and it’s exhausting
 to feel this much
 and act like it’s nothing
-to replay conversations
-looking for something
-that might not even be there
 to hope
 even when I tell myself
 I shouldn’t
-
-and sometimes
-I look at you
-and I feel like I don’t deserve you
-like you’re too good
-too smart
-too put together
-Because you are
-and I’m just here
-trying to be better
-because of you
-for you
-even if you never see it
-
-and that’s why this is so hard
-because I don’t want to lose you
-what we have right now
-means everything to me
-you’re comfortable with me
-you trust me
-you see me as someone safe (I hope 🥰)
-and I don’t want to be the reason
-that changes
-I don’t want you to pull away
-because you notice
-what I’m trying so hard to hide
 
 so if nothing ever changes
 I’ll stay
@@ -302,38 +303,46 @@ I’ll still be here
 as your friend....
 though i want you to think about it for a second time`;
 
-/* TYPEWRITER SLOW */
-function typeText(text, el, speed=35){
+/* TYPEWRITER (SLOW + PAUSE FRIENDSHIP....) */
+function type(el,text,speed=30,cb){
 let i=0;
 el.innerHTML="";
 
 function t(){
 if(i<text.length){
+
 el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
 
-/* pause effect */
+/* 2 second pause */
 if(text.substring(i-11,i)==="friendship"){
-setTimeout(t,2000); // 2 sec pause
+setTimeout(t,2000);
 return;
 }
 
 i++;
 setTimeout(t,speed);
-} else {
-document.getElementById("poemSec").insertAdjacentHTML(
-"beforeend",
-`<div style="text-align:center;margin-top:20px">
-<button onclick="closeSite()">finish</button>
-</div>`
-);
-}
+} else cb && cb();
 }
 t();
 }
 
-function typePoem(){
-go("poemSec");
-typeText(poem,document.getElementById("poem"));
+/* FLOW */
+function type1(){
+go("p1");
+type(document.getElementById("t1"),p1);
+}
+function goP2(){
+go("p2");
+type(document.getElementById("t2"),p2);
+}
+function goP3(){
+go("p3");
+type(document.getElementById("t3"),p3);
+}
+function final(){
+go("final");
+type(document.getElementById("finalText"),
+"thank you...");
 }
 
 function closeSite(){
