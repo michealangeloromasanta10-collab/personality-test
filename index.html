@@ -15,7 +15,7 @@ body{
     overflow-x:hidden;
 }
 
-/* PAPER TEXTURE */
+/* paper texture */
 body::before{
     content:"";
     position:fixed;
@@ -32,7 +32,7 @@ body::before{
     100%{transform:translate(0,0);}
 }
 
-/* FLOATING */
+/* floating */
 .heart,.star,.cat{
     position:fixed;
     animation:float 12s linear infinite;
@@ -43,7 +43,7 @@ body::before{
     100%{transform:translateY(-10vh);}
 }
 
-/* SECTIONS */
+/* sections cinematic */
 .section{
     display:none;
     padding:40px;
@@ -60,7 +60,7 @@ body::before{
     filter:blur(0);
 }
 
-/* BOX */
+/* box */
 .box{
     border:2px solid #b85c5c;
     border-radius:15px;
@@ -68,19 +68,9 @@ body::before{
     background:rgba(60,10,10,0.55);
     max-width:800px;
     margin:auto;
-    transition:0.4s;
 }
 
-/* ✨ POEM BORDER GLOW */
-.glow{
-    animation:poemGlow 2s infinite alternate;
-}
-@keyframes poemGlow{
-    from{box-shadow:0 0 10px rgba(255,120,120,0.2);}
-    to{box-shadow:0 0 25px rgba(255,120,120,0.6);}
-}
-
-/* SONG GLOW */
+/* song glow */
 .song{
     border:2px solid #b85c5c;
     border-radius:12px;
@@ -88,14 +78,14 @@ body::before{
     margin:15px auto;
     width:260px;
     background:rgba(40,10,10,0.6);
-    animation:songGlow 1.5s ease;
+    animation:songGlow 1s ease;
 }
 @keyframes songGlow{
     from{box-shadow:0 0 0 rgba(255,100,100,0);}
     to{box-shadow:0 0 20px rgba(255,100,100,0.4);}
 }
 
-/* BUTTONS */
+/* button glow */
 button{
     padding:10px 20px;
     margin:10px;
@@ -109,8 +99,6 @@ button{
     position:relative;
     overflow:hidden;
 }
-
-/* 💡 CLICK LIGHT EFFECT */
 button:active::after{
     content:"";
     position:absolute;
@@ -127,13 +115,12 @@ button:active::after{
     to{opacity:0;}
 }
 
-/* TEXT ANIMATIONS */
-.fadeText{
-    animation:fadeIn 1.5s ease;
+/* final blinking ? */
+.blink{
+    animation:blink 1s infinite;
 }
-@keyframes fadeIn{
-    from{opacity:0;}
-    to{opacity:1;}
+@keyframes blink{
+    50%{opacity:0;}
 }
 </style>
 </head>
@@ -166,10 +153,8 @@ button:active::after{
 <div class="section" id="q3">
 <div class="box">
 <h1>last na, are. you. sure?</h1>
-
-<h2 id="beforeText" class="fadeText"></h2>
-
-<button onclick="startCinematic()">yes</button>
+<h2 id="before" class="blink">but before that</h2>
+<button onclick="start()">yes</button>
 <button onclick="closeSite()">no</button>
 </div>
 </div>
@@ -177,8 +162,7 @@ button:active::after{
 <!-- SONGS -->
 <div class="section" id="songs">
 <div class="box">
-<h2 id="btwText" class="fadeText"></h2>
-<h3>songs that remind me of you</h3>
+<h2>songs that remind me of you</h2>
 <div id="songBox"></div>
 <button onclick="nextSong()">next</button>
 </div>
@@ -187,14 +171,41 @@ button:active::after{
 <!-- POEM INTRO -->
 <div class="section" id="intro">
 <div class="box">
-<h2 id="okayText"></h2>
+<h2 id="introText"></h2>
 </div>
 </div>
 
-<!-- POEM -->
-<div class="section" id="poemSec">
-<div class="box glow">
-<div id="poem"></div>
+<!-- POEM 1 -->
+<div class="section" id="p1">
+<div class="box">
+<div id="t1"></div>
+<h3>are you still with me?</h3>
+<button onclick="goP2()">yes</button>
+<button onclick="closeSite()">no</button>
+</div>
+</div>
+
+<!-- POEM 2 -->
+<div class="section" id="p2">
+<div class="box">
+<div id="t2"></div>
+<h3>are you still with me?</h3>
+<button onclick="goP3()">yes</button>
+<button onclick="closeSite()">no</button>
+</div>
+</div>
+
+<!-- POEM 3 -->
+<div class="section" id="p3">
+<div class="box">
+<div id="t3"></div>
+</div>
+</div>
+
+<!-- FINAL -->
+<div class="section" id="final">
+<div class="box">
+<h2 id="finalText"></h2>
 </div>
 </div>
 
@@ -203,33 +214,15 @@ button:active::after{
 let current="q1";
 
 function go(id){
-let prev=document.getElementById(current);
-prev.classList.remove("active");
+document.getElementById(current).classList.remove("active");
 setTimeout(()=>{
 document.getElementById(id).classList.add("active");
 current=id;
 },400);
 }
 
-/* Q3 "BUT BEFORE THAT" */
-document.getElementById("beforeText").innerText="but before that";
-
-/* animate it */
-setInterval(()=>{
-document.getElementById("beforeText").style.opacity=
-Math.random()>0.5?"1":"0.5";
-},600);
-
-/* START */
-function startCinematic(){
+function start(){
 go("songs");
-
-/* animate before text */
-let t=document.getElementById("btwText");
-t.innerText="but before that";
-setInterval(()=>{
-t.style.transform="scale("+(1+Math.random()*0.05)+")";
-},500);
 }
 
 /* SONGS */
@@ -238,7 +231,6 @@ const songs=[
 "SECRET DOOR — Arctic Monkeys",
 "1&ONLY — XLOV"
 ];
-
 let i=0;
 
 function nextSong(){
@@ -254,9 +246,9 @@ typeIntro();
 }
 }
 
-/* "okay here goes" */
+/* INTRO */
 function typeIntro(){
-let el=document.getElementById("okayText");
+let el=document.getElementById("introText");
 let text="okay here goes...";
 let i=0;
 el.innerHTML="";
@@ -265,17 +257,18 @@ function t(){
 if(i<text.length){
 el.innerHTML+=text[i];
 i++;
-setTimeout(t,80);
+setTimeout(t,70);
 } else {
-setTimeout(()=>go("poemSec"),1200);
-setTimeout(typePoem,1600);
+setTimeout(()=>go("p1"),800);
+setTimeout(type1,1200);
 }
 }
 t();
 }
 
-/* FULL POEM */
-const poem=`I need to tell you something
+/* FULL POEM SPLIT */
+
+const p1=`I need to tell you something
 not to change anything
 just because I’m tired of pretending
 I told you I moved on
@@ -284,20 +277,11 @@ it’s been eleven months (or more because I wrote this at Apr 28 2026)
 of carrying this quietly
 of smiling like it faded
 when it never did
-I remember when I told you before
-and you said you couldn’t
-not because there was nothing
-but because you were closed
-because you thought it wouldn’t end well
-and I understood that
-I still do
-but understanding it
-didn’t make my feelings disappear
-so I stayed
+I stayed
 as your friend
-your best friend (I hope 🫣)
+your best friend (I hope 🫣)`;
 
-and somewhere along the way
+const p2=`and somewhere along the way
 I learned how to hide it
 how to make it look like I was okay
 but I wasn’t
@@ -308,20 +292,19 @@ and I hate that I lied to you about that
 
 and I don’t think you realize
 what you do to me
-how your name changes my mood
+how your name changes everything
 how I still get excited
 over your messages
-how I look for you everywhere
-and always find you first
+how I look for you everywhere`;
 
-how I make scenarios of us
-how I wish you were there in every moment
+const p3=`how I make up scenarios of us
+how every calm moment
+feels like it’s missing you
 how every love song
-feels like it belongs to you
+sounds like it was written for you
 
 and it’s exhausting
 to feel this much
-and act like it’s nothing
 
 so if nothing ever changes
 I’ll stay
@@ -329,33 +312,46 @@ I’ll still be here
 as your friend....
 though i want you to think about it for a second time`;
 
-/* TYPEWRITER */
-function typePoem(){
-let el=document.getElementById("poem");
+/* TYPE */
+function type(el,text,speed,cb){
 let i=0;
 el.innerHTML="";
-document.querySelector(".box").classList.add("glow");
-
 function t(){
-if(i<poem.length){
-el.innerHTML+=poem[i]==="\n"?"<br>":poem[i];
+if(i<text.length){
+el.innerHTML+=text[i]==="\n"?"<br>":text[i];
 i++;
-setTimeout(t,35);
-} else {
-setTimeout(typeFinal,1000);
-}
+setTimeout(t,speed);
+} else cb&&cb();
 }
 t();
 }
 
-/* FINAL SLOW */
-function typeFinal(){
-go("poemSec");
+function type1(){
+type(document.getElementById("t1"),p1,28);
+}
+function goP2(){
+go("p2");
+type(document.getElementById("t2"),p2,28);
+}
+function goP3(){
+go("p3");
+type(document.getElementById("t3"),p3,28,final);
+}
 
-setTimeout(()=>{
-document.getElementById("poem").innerHTML+=
-"<br><br><span style='font-size:28px'>thank you...</span>";
-},2000);
+/* FINAL */
+function final(){
+go("final");
+type(document.getElementById("finalText"),
+"thank you for your time?",40);
+
+setInterval(()=>{
+let el=document.getElementById("finalText");
+if(el.innerHTML.includes("?")){
+el.innerHTML="thank you for your time";
+} else {
+el.innerHTML="thank you for your time?";
+}
+},1000);
 }
 
 function closeSite(){
